@@ -1,0 +1,10 @@
+{% extends "accounts/base.html" %}
+{% block title %}แดชบอร์ดแอดมิน{% endblock %}
+{% block content %}
+<h3 class="mt-4 mb-3">📊 แดชบอร์ดแอดมิน</h3>
+<div class="row g-4">
+{% for name, count in counts.items %}<div class="col-md-4"><div class="card card-custom"><div class="card-body text-center"><h5>{{ name|title }}</h5><p class="display-6 text-primary fw-bold">{{ count }}</p>
+{% if name == 'stations' %}<a class="btn btn-outline-primary" href="{% url 'manage_stations' %}">จัดการ</a>{% elif name == 'trains' %}<a class="btn btn-outline-primary" href="{% url 'manage_trains' %}">จัดการ</a>{% elif name == 'schedules' %}<a class="btn btn-outline-primary" href="{% url 'manage_schedules' %}">จัดการ</a>{% endif %}
+</div></div></div>{% endfor %}
+</div>
+{% endblock %}

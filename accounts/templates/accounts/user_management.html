@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 40px; }
+        .card { background: #fff; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); padding: 30px; max-width: 1000px; margin: 0 auto; }
+        .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        a { color: #1f7a8c; text-decoration: none; }
+        form { display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0; }
+        input { padding: 10px; border: 1px solid #cdd4da; border-radius: 8px; }
+        button { padding: 10px 16px; background: #2d6cdf; color: white; border: none; border-radius: 8px; cursor: pointer; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border-bottom: 1px solid #ddd; padding: 12px; text-align: left; }
+        .danger { background: #b00020; color: white; border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+        .errorlist { color: #b00020; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="topbar">
+            <h1>User Management</h1>
+            <div>
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'logout' %}">Logout</a>
+            </div>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+        <h3>Create New User</h3>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Add User</button>
+        </form>
+
+        <h3>All Accounts</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for account in users %}
+                <tr>
+                    <td>{{ account.username }}</td>
+                    <td>{{ account.email|default:'-' }}</td>
+                    <td>{% if account.is_superuser %}Superuser{% elif account.is_staff %}Staff{% else %}User{% endif %}</td>
+                    <td>
+                        {% if account != request.user %}
+                            <form method="post" action="{% url 'delete_user' account.id %}">
+                                {% csrf_token %}
+                                <button class="danger" type="submit">Delete</button>
+                            </form>
+                        {% else %}
+                            <span>Current user</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4">No users found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

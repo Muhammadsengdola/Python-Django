@@ -1,0 +1,14 @@
+{% extends "accounts/base.html" %}
+{% block title %}การจองของฉัน{% endblock %}
+{% block content %}
+<h2 class="mt-4 mb-3">📋 การจองของฉัน</h2>
+<div class="card p-3 table-custom"><div class="table-responsive"><table class="table align-middle mb-0">
+<thead><tr><th>ID</th><th>ขบวน</th><th>เส้นทาง</th><th>วันเดินทาง</th><th>เวลา</th><th>ชั้น</th><th>ที่นั่ง</th><th>ราคา</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+<tbody>{% for booking in bookings %}<tr>
+<td>{{ booking.id }}</td><td>{{ booking.schedule.train.train_number }}</td><td>{{ booking.schedule.origin.name }} → {{ booking.schedule.destination.name }}</td>
+<td>{{ booking.schedule.travel_date }}</td><td>{{ booking.schedule.departure_time }} - {{ booking.schedule.arrival_time }}</td><td>{{ booking.train_class.name }}</td><td>{{ booking.seat.number }}</td><td>{{ booking.price }} บาท</td>
+<td><span class="badge {% if booking.status == 'Confirmed' %}bg-success{% elif booking.status == 'Pending' %}bg-warning text-dark{% else %}bg-danger{% endif %}">{{ booking.status }}</span></td>
+<td>{% if booking.status != 'Cancelled' %}<form method="post">{% csrf_token %}<input type="hidden" name="booking_id" value="{{ booking.id }}"><button class="btn btn-danger btn-sm">ยกเลิก</button></form>{% endif %}</td>
+</tr>{% empty %}<tr><td colspan="10" class="text-center">ยังไม่มีการจอง</td></tr>{% endfor %}</tbody>
+</table></div></div>
+{% endblock %}

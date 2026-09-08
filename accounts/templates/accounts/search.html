@@ -1,0 +1,24 @@
+{% extends "accounts/base.html" %}
+{% block title %}ค้นหาตั๋ว{% endblock %}
+{% block content %}
+<div class="card p-4 mt-4">
+    <h2 class="mb-4">🔎 ค้นหาตั๋ว</h2>
+    <form method="get" class="row g-3 mb-4">
+        <div class="col-md-4"><label class="form-label">ต้นทาง</label>{{ form.origin }}</div>
+        <div class="col-md-4"><label class="form-label">ปลายทาง</label>{{ form.destination }}</div>
+        <div class="col-md-4"><label class="form-label">วันที่</label>{{ form.travel_date }}</div>
+        <div class="col-12"><button class="btn btn-primary px-4">ค้นหา</button></div>
+    </form>
+    {% if request.GET %}
+    <div class="table-responsive table-custom"><table class="table align-middle mb-0">
+        <thead><tr><th>ขบวน</th><th>ออก</th><th>ถึง</th><th>ต้นทาง</th><th>ปลายทาง</th><th>วันเดินทาง</th><th>คลาส/ราคา</th><th>จอง</th></tr></thead>
+        <tbody>{% for schedule in schedules %}<tr>
+            <td>{{ schedule.train.train_number }}</td><td>{{ schedule.departure_time }}</td><td>{{ schedule.arrival_time }}</td>
+            <td>{{ schedule.origin.name }}</td><td>{{ schedule.destination.name }}</td><td>{{ schedule.travel_date }}</td>
+            <td>{% for class in classes %}<div>{{ class.name }} - {{ class.price }} บาท</div>{% endfor %}</td>
+            <td>{% for class in classes %}<a class="btn btn-primary btn-sm mb-1" href="{% url 'seat_selection' schedule.id class.id %}">จอง {{ class.name }}</a><br>{% endfor %}</td>
+        </tr>{% empty %}<tr><td colspan="8" class="text-center">ไม่พบตารางเวลา</td></tr>{% endfor %}</tbody>
+    </table></div>
+    {% endif %}
+</div>
+{% endblock %}
